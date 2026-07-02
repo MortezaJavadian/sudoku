@@ -1,9 +1,28 @@
 import os
 import sys
 import time
+import glob
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 from solver import SudokuSolver
+
+def read_grid_from_txt(filepath):
+    grid = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            if line.strip():
+                row = [int(x) for x in line.split()]
+                if len(row) == 9:
+                    grid.append(row)
+    if len(grid) != 9:
+        raise ValueError(f"Invalid grid size in {filepath}")
+    return grid
+
+def write_grid_to_txt(grid, filepath):
+    with open(filepath, 'w') as f:
+        for r in range(9):
+            row_str = " ".join(str(val) for val in grid[r])
+            f.write(row_str + "\n")
 
 def print_grid(grid):
     for r in range(9):
@@ -18,45 +37,52 @@ def print_grid(grid):
         print(row_str)
 
 def main():
-    # A known 'hard' Sudoku puzzle
-    puzzle = [
-        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-        [0, 0, 0, 0, 8, 0, 0, 7, 9]
-    ]
-
-    print("Initial Puzzle:")
-    print_grid(puzzle)
+    input_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/sudoku_texts'))
+    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/output/phase3'))
     
-    solver = SudokuSolver(puzzle)
+    os.makedirs(output_dir, exist_ok=True)
     
-    start_time = time.time()
-    success = solver.solve()
-    end_time = time.time()
-    
-    print(f"\nSolved: {success}")
-    print(f"Time taken: {end_time - start_time:.5f} seconds")
-    
-    if success:
-        print("\nSolution:")
-        print_grid(solver.get_grid())
-    else:
-        print("\nPuzzle could not be solved.")
+    txt_files = glob.glob(os.path.join(input_dir, '*.txt'))
+    if not txt_files:
+        print(f"No .txt files found in {input_dir}")
+        return
         
-    # Test Invalid Puzzle
-    invalid_puzzle = [row[:] for row in puzzle]
-    invalid_puzzle[0][2] = 5 # Place '5' in the same row as the first '5'
-    
-    solver_invalid = SudokuSolver(invalid_puzzle)
-    success_invalid = solver_invalid.solve()
-    assert success_invalid == False, "Solver should fail on invalid puzzles"
-    print("\nInvalid puzzle correctly identified as unsolvable.")
+    for txt_file in sorted(txt_files):
+        filename = os.path.basename(txt_file)
+        print(f"\n--- Processing {filename} ---")
+        
+        try:
+            puzzle = read_grid_from_txt(txt_file)
+        except Exception as e:
+            print(f"Error reading file: {e}")
+            continue
+            
+        print("Initial Puzzle:")
+        print_grid(puzzle)
+        
+        solver = SudokuSolver(puzzle)
+        
+        start_time = time.time()
+        success = solver.solve()
+        end_time = time.time()
+        
+        print(f"\nSolved: {success}")
+        print(f"Time taken: {end_time - start_time:.5f} seconds")
+        
+        if success:
+            solved_grid = solver.get_grid()
+            print("\nSolution:")
+            print_grid(solved_grid)
+            
+            output_filepath = os.path.join(output_dir, f"solved_{filename}")
+            write_grid_to_txt(solved_grid, output_filepath)
+            print(f"Saved solution to {output_filepath}")
+        else:
+            print("\nPuzzle could not be solved (invalid or no solution).")
+            output_filepath = os.path.join(output_dir, f"failed_{filename}")
+            with open(output_filepath, 'w') as f:
+                f.write("UNSOLVABLE OR INVALID PUZZLE\n")
+            print(f"Saved failure state to {output_filepath}")
 
 if __name__ == "__main__":
     main()
