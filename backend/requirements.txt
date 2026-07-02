@@ -2,3 +2,6 @@ opencv-python==4.8.1.78
 numpy==1.26.4
 torch
 torchvision
+matplotlib
+seaborn
+scikit-learn
