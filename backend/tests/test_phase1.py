@@ -9,7 +9,7 @@ from extractor import extract_sudoku
 def main():
     # Updated paths to be absolute based on the script location
     samples_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/sudoku_images'))
-    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/output/sudoku_images'))
+    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/output/phase1'))
     
     if not os.path.exists(samples_dir):
         print(f"Samples directory {samples_dir} not found!")
