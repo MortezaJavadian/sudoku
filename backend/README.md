@@ -48,8 +48,9 @@
 برای اجرای تست‌های فاز اول روی تمامی عکس‌های سودوکو و تولید مجدد خروجی‌ها (از جمله `debug_grid.jpg` و `debug_thresh.jpg`)، دستورات زیر را اجرا کنید:
 
 ```bash
-cd tests
-python test_phase1.py
+cd /Users/morteza/Documents/sudoku/backend
+source venv/bin/activate
+python tests/test_phase1.py
 ```
 با این کار تمامی عکس‌های مسیر `data/sudoku_images/` خوانده شده و نتایج ۱۰۰٪ دقیق آن‌ها در مسیر `data/output/sudoku_images/` پوشه‌بندی می‌شوند.
 
@@ -68,6 +69,21 @@ python test_phase1.py
 - **حل چالش عدد ۰:** از آنجا که سودوکو عدد ۰ ندارد، کلاس ۰ کاملاً به عنوان خانه‌ی خالی به شبکه معرفی شد و در نتیجه مدل ۱۰۰٪ مواقع خانه‌های خالی را به‌درستی تشخیص داد (بدون اشتباه گرفتن با نویز یا اعداد).
 - شبکه به عنوان فایل `backend/models/digit_recognizer.pth` ذخیره شده است.
 
+### اجرای آموزش و تست فاز ۲
+برای آموزش مجدد شبکه‌ی عصبی (در صورت تغییر در دیتاست یا مدل):
+```bash
+cd /Users/morteza/Documents/sudoku/backend
+source venv/bin/activate
+python src/train.py
+```
+
+برای تست و ارزیابی مدل آموزش‌دیده روی بیش از ۲۸,۰۰۰ تصویر تستی:
+```bash
+cd /Users/morteza/Documents/sudoku/backend
+source venv/bin/activate
+python tests/test_phase2.py
+```
+
 ## فاز ۳: حل سودوکو (Sudoku Solver)
 
 در این فاز هدف پیاده‌سازی منطق حل معمای سودوکو با استفاده از الگوریتم‌های هوش مصنوعی است.
@@ -81,6 +97,15 @@ python test_phase1.py
 ### نتایج تست فاز ۳:
 - **سرعت فوق‌العاده:** پازل‌های سخت در کسری از ثانیه (کمتر از ۰.۰۰۵ ثانیه) به پاسخ قطعی می‌رسند.
 - **مقاومت در برابر خطای ورودی:** جداول اشتباه بلافاصله با `False` ریجکت می‌شوند.
+
+### اجرای تست‌های فاز ۳
+برای حل کردن پازل‌های متنی آزمایشی بسیار سخت که در پوشه `data/sudoku_texts/` قرار دارند:
+```bash
+cd /Users/morteza/Documents/sudoku/backend
+source venv/bin/activate
+python tests/test_phase3.py
+```
+خروجی‌ها شامل زمان حل، آرایه‌ی نهایی در ترمینال، و جواب اعتبارسنجی شده به فرمت txt در مسیر `data/output/phase3/` ایجاد می‌گردند.
 
 ## قدم‌های بعدی (Next Steps)
 - **فاز ۴:** یکپارچه‌سازی نهایی و چاپ نتایج. רندر کردن اعداد حل شده بر روی همان عکس اصلی با حفظ زاویه و پرسپکتیو اولیه.

@@ -7,9 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src'
 from extractor import extract_sudoku
 
 def main():
-    # Updated paths for the new dataset structure
-    samples_dir = "../data/sudoku_images"
-    output_dir = "../data/output/sudoku_images"
+    # Updated paths to be absolute based on the script location
+    samples_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/sudoku_images'))
+    output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/output/sudoku_images'))
     
     if not os.path.exists(samples_dir):
         print(f"Samples directory {samples_dir} not found!")
